@@ -1,10 +1,10 @@
 {
   "mappings": [
-    "/content/EDSTestRepo/:/",
-    "/content/EDSTestRepo/configuration:/.helix/config.json",
-    "/content/EDSTestRepo/metadata:/metadata.json"
+    "/content/edstestrepo/:/",
+    "/content/edstestrepo/configuration:/.helix/config.json",
+    "/content/edstestrepo/metadata:/metadata.json"
   ],
   "includes": [
-    "/content/EDSTestRepo/"
+    "/content/edstestrepo/"
   ]
 }
