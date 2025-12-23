@@ -1,5 +1,5 @@
 mountpoints:
   /:
-    url: "https://author-p52710-e1559444.adobeaemcloud.com/bin/franklin.delivery/SUDEEPGH09/EDSTestRepo/main"
+    url: "https://author-p52710-e1559444.adobeaemcloud.com/bin/franklin.delivery/sudeepgh09/edstestrepo/main"
     type: "markup"
     suffix: ".html"
