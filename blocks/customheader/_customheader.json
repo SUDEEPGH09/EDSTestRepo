@@ -16,15 +16,15 @@
       }
     },
     {
-      "title": "Header Section",
-      "id": "customheader-section",
+      "title": "Header Content",
+      "id": "customheader-content",
       "plugins": {
         "xwalk": {
           "page": {
             "resourceType": "core/franklin/components/block/v1/block/item",
             "template": {
-              "name": "Header Section",
-              "model": "customheader-section"
+              "name": "Header Content",
+              "model": "customheader-content"
             }
           }
         }
@@ -33,7 +33,7 @@
   ],
   "models": [
     {
-      "id": "customheader-section",
+      "id": "customheader-content",
       "fields": [
         {
           "component": "reference",
@@ -61,7 +61,7 @@
     {
       "id": "customheader",
       "components": [
-        "customheader-section"
+        "customheader-content"
       ]
     }
   ]

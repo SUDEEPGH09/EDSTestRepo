@@ -15,8 +15,7 @@
       "hero",
       "cards",
       "columns",
-      "fragment",
-      "customheader"
+      "fragment"
     ]
   },
   {
@@ -43,7 +42,7 @@
   {
     "id": "customheader",
     "components": [
-      "customheader-section"
+      "customheader-content"
     ]
   }
 ]

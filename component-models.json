@@ -180,7 +180,7 @@
     ]
   },
   {
-    "id": "customheader-section",
+    "id": "customheader-content",
     "fields": [
       {
         "component": "reference",
