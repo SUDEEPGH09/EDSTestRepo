@@ -38,5 +38,11 @@
       "button",
       "title"
     ]
+  },
+  {
+    "id": "customheader",
+    "components": [
+      "customheader-section"
+    ]
   }
 ]

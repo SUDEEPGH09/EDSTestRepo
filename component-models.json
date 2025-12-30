@@ -180,6 +180,30 @@
     ]
   },
   {
+    "id": "customheader-section",
+    "fields": [
+      {
+        "component": "reference",
+        "name": "media",
+        "label": "Image / Icon",
+        "valueType": "string",
+        "multi": false
+      },
+      {
+        "component": "richtext",
+        "name": "content",
+        "label": "Text / Navigation",
+        "valueType": "string"
+      },
+      {
+        "component": "textfield",
+        "name": "link",
+        "label": "Link URL",
+        "valueType": "string"
+      }
+    ]
+  },
+  {
     "id": "fragment",
     "fields": [
       {
