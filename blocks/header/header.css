@@ -1,33 +1,12 @@
-/* ==========================
-   Head-top (teal strip)
-   Sticky above nav
-=========================== */
-.head-top {
-  position: fixed;      
-  top: 0;                
-  z-index: 4;            
-  background-color: var(--nav-color);
-  color: var(--sovm-header);
-  font-weight: 600;
-  text-align: left;
-  padding: 0.5rem 1rem;
-  font-size: 14px;
-  width: 100%;
-  margin: auto;
-  box-sizing: border-box;
-}
-
 /* header and nav layout */
 header .nav-wrapper {
   background-color: var(--sovm-header);
   width: 100%;
-  z-index: 3;                       /* below head-top */
+  z-index: 2;
   position: fixed;
-  top: var(--head-top-height, 32px); 
   padding: 1.25rem 0;
 }
 
-/* rest of your CSS remains the same */
 header nav {
   box-sizing: border-box;
   display: grid;
@@ -35,6 +14,7 @@ header nav {
     'hamburger brand tools' var(--nav-height)
     'sections sections sections' 1fr / auto 1fr auto;
   align-items: center;
+  /* gap: 0 24px; */
   margin: auto;
   max-width: 1232px;
   height: var(--nav-height);
@@ -51,11 +31,13 @@ header nav[aria-expanded='true'] {
   min-height: 100dvh;
 }
 
-@media (width >= 768px) {
+@media (width >= 900px) {
   header nav {
     display: flex;
     justify-content: space-between;
+    /* gap: 0 32px; */
     max-width: 1082px;
+    /* padding: 0 32px; */
   }
 
   header nav[aria-expanded='true'] {
@@ -70,45 +52,50 @@ header nav p {
 }
 
 header nav a:any-link {
-  color: var(--sovm-header);
-  font-weight: 500;
-  font-size: 16px;
+  color: black;
+  background-color: none;
 }
 
-a.button:any-link,
+header nav a.button:any-link,
 button {
+  box-sizing: border-box;
   display: inline-block;
   max-width: 100%;
   margin: 12px 0;
+  /* border: 2px solid transparent; */
+  /* border-radius: 2.4em; */
+  /* padding: 0.5em 1.2em; */
   font-family: var(--body-font-family);
   font-style: normal;
   font-weight: 500;
-  font-size: 16px;
   line-height: 1.25;
   text-align: center;
   text-decoration: none;
   background-color: var(--sovm-header);
+  /* color: var(--nav-color); */
   cursor: pointer;
   overflow: hidden;
+  /* text-overflow: ellipsis; */
   white-space: nowrap;
 }
 
-a.button:hover,
+header nav a.button:hover,
 a.button:focus,
 button:hover,
 button:focus {
+  /* background-color: var(--link-hover-color); */
   cursor: pointer;
   color: var(--nav-color);
 }
-
-a.button:active{
-  color: var(--light-color);
+header nav a.button:active{
+  color: white;
 
 }
 
-a.button.btn-nav,
+header nav a.button.btn-nav,
 button.btn-nav {
   background-color: unset;
+  /* border: 2px solid currentcolor; */
   color: var(--nav-color);
 }
 
@@ -126,12 +113,14 @@ header nav .nav-hamburger button {
   border: 0;
   border-radius: 0;
   padding: 0;
+  /* background-color: var(--background-color); */
   color: white;
   overflow: initial;
   text-overflow: initial;
   white-space: initial;
   position: fixed;
   right: 30px;
+
 }
 
 header nav .nav-hamburger-icon,
@@ -187,7 +176,7 @@ header nav[aria-expanded='true'] .nav-hamburger-icon::after {
   transform: rotate(-45deg);
 }
 
-@media (width >= 768px) {
+@media (width >= 900px) {
   header nav .nav-hamburger {
     display: none;
     visibility: hidden;
@@ -211,6 +200,7 @@ header nav .nav-brand img {
 /* sections */
 header nav .nav-sections {
   grid-area: sections;
+  /* flex: 1 1 auto; */
   display: none;
   visibility: hidden;
 }
@@ -239,7 +229,7 @@ header nav .nav-sections ul > li > ul > li {
   font-weight: 400;
 }
 
-@media (width >= 768px) {
+@media (width >= 900px) {
   header nav .nav-sections {
     display: block;
     visibility: visible;
@@ -260,14 +250,14 @@ header nav .nav-sections ul > li > ul > li {
     content: '';
     display: inline-block;
     position: absolute;
-    top: 45%;
+    top: 40%;
     right: 16%;
     transform: rotate(135deg);
-    width: 4px;
-    height: 4px;
+    width: 6px;
+    height: 6px;
     border: 2px solid currentcolor;
     border-radius: 0 1px 0 0;
-    border-width: 1.5px 1.5px 0 0;
+    border-width: 2px 2px 0 0;
   }
 
   header nav .nav-sections .nav-drop[aria-expanded='true']::after {
@@ -296,16 +286,25 @@ header nav .nav-sections ul > li > ul > li {
   header nav .nav-sections .default-content-wrapper > ul > li[aria-expanded='true'] > ul {
     display: block;
     position: absolute;
-    left: 20px;
-    min-width: 150px;
-    top: 100%;
-    padding: 6px;
-    border-radius: 14px;
-    border-color: #282b3a;
+    left: -24px;
+    width: 200px;
+    top: 150%;
+    padding: 16px;
     background-color: var(--light-color);
     white-space: initial;
   }
 
+  header nav .nav-sections .default-content-wrapper > ul > li > ul::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 16px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid var(--light-color);
+  }
 
   header nav .nav-sections .default-content-wrapper > ul > li > ul > li {
     padding: 8px 0;
