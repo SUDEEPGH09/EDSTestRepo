@@ -490,6 +490,9 @@ function decorateIcon(span, prefix = '', alt = '') {
 function decorateIcons(element, prefix = '') {
   const icons = element.querySelectorAll('span.icon');
   icons.forEach((span) => {
+    if ([...span.classList].some((c) => c.startsWith('icon-color-'))) {
+      return;
+    }
     decorateIcon(span, prefix);
   });
 }
@@ -498,7 +501,10 @@ function decorateIcons(element, prefix = '') {
  *  e.g, :color-colorname:*/
 function decorateTextColors(element) {
   element.querySelectorAll('span[class*="color-"]').forEach((span) => {
-    const colorClass = [...span.classList].find((c) => c.startsWith('color-'));
+    const colorClass = [...span.classList].find((c) =>
+      c.startsWith('color-')
+    );
+
     if (!colorClass) return;
 
     const heading = span.closest('h1, h2, h3, h4, h5, h6, p');
@@ -508,6 +514,7 @@ function decorateTextColors(element) {
     span.remove();
   });
 }
+
 
 
 
@@ -736,6 +743,7 @@ export {
   decorateBlocks,
   decorateButtons,
   decorateIcons,
+  decorateTextColors,
   decorateSections,
   decorateTemplateAndTheme,
   getMetadata,
@@ -752,6 +760,5 @@ export {
   toCamelCase,
   toClassName,
   waitForFirstImage,
-  wrapTextNodes,
-  decorateTextColors,
+  wrapTextNodes
 };
