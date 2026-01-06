@@ -1,7 +1,7 @@
 import { getMetadata } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
 
-// media query match that indicates mobile/tablet width
+// media query match that indicates desktop width
 const isDesktop = window.matchMedia('(min-width: 768px)');
 
 /* ================================
@@ -56,7 +56,7 @@ function closeOnFocusLost(e) {
 
 function openOnKeydown(e) {
   const focused = document.activeElement;
-  if (!focused || focused.className !== 'nav-drop') return;
+  if (!focused || !focused.classList.contains('nav-drop')) return;
 
   if (e.code === 'Enter' || e.code === 'Space') {
     const expanded = focused.getAttribute('aria-expanded') === 'true';
@@ -77,16 +77,16 @@ function toggleMenu(nav, navSections, forceExpanded = null) {
   const button = nav.querySelector('.nav-hamburger button');
 
   document.body.style.overflowY = expanded || isDesktop.matches ? '' : 'hidden';
-
   nav.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+
   toggleAllNavSections(
     navSections,
-    expanded || isDesktop.matches ? 'false' : 'true',
+    expanded || isDesktop.matches ? 'false' : 'true'
   );
 
   button?.setAttribute(
     'aria-label',
-    expanded ? 'Open navigation' : 'Close navigation',
+    expanded ? 'Open navigation' : 'Close navigation'
   );
 
   const navDrops = navSections?.querySelectorAll('.nav-drop') || [];
@@ -120,22 +120,19 @@ function toggleMenu(nav, navSections, forceExpanded = null) {
 
 export default async function decorate(block) {
   const navMeta = getMetadata('nav');
-  const navPath = navMeta
-    ? new URL(navMeta, window.location).pathname
-    : '/nav';
-
+  const navPath = navMeta ? new URL(navMeta, window.location).pathname : '/nav';
   const fragment = await loadFragment(navPath);
   if (!fragment) return;
 
   block.textContent = '';
 
   /* -------- Head Top (authorable) -------- */
-  const firstSection = fragment.querySelector(':scope > div');
+  const sections = fragment.querySelectorAll(':scope > div');
 
-  if (firstSection) {
+  if (sections[0]) {
     const headTop = document.createElement('div');
     headTop.className = 'head-top';
-    headTop.append(firstSection);
+    headTop.append(sections[0]);
     block.append(headTop);
   }
 
@@ -147,12 +144,12 @@ export default async function decorate(block) {
     nav.append(fragment.firstElementChild);
   }
 
-  const classes = ['brand', 'sections', 'tools'];
-  classes.forEach((cls, index) => {
-    const section = nav.children[index];
-    if (section) section.classList.add(`nav-${cls}`);
-  });
+  // Apply correct classes for 4 sections
+  if (sections[1]) sections[1].classList.add('nav-brand');    // logo
+  if (sections[2]) sections[2].classList.add('nav-sections'); // nav items
+  if (sections[3]) sections[3].classList.add('nav-tools');    // icons
 
+  // Normalize brand button styles (logo stays)
   const navBrand = nav.querySelector('.nav-brand');
   if (navBrand) {
     const brandLink = navBrand.querySelector('.button');
@@ -167,9 +164,7 @@ export default async function decorate(block) {
     navSections
       .querySelectorAll(':scope .default-content-wrapper > ul > li')
       .forEach((navSection) => {
-        if (navSection.querySelector('ul')) {
-          navSection.classList.add('nav-drop');
-        }
+        if (navSection.querySelector('ul')) navSection.classList.add('nav-drop');
 
         navSection.addEventListener('click', () => {
           if (isDesktop.matches) {
@@ -195,9 +190,7 @@ export default async function decorate(block) {
   nav.setAttribute('aria-expanded', 'false');
 
   toggleMenu(nav, navSections, isDesktop.matches);
-  isDesktop.addEventListener('change', () => {
-    toggleMenu(nav, navSections, isDesktop.matches);
-  });
+  isDesktop.addEventListener('change', () => toggleMenu(nav, navSections, isDesktop.matches));
 
   const navWrapper = document.createElement('div');
   navWrapper.className = 'nav-wrapper';
