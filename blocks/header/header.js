@@ -1,27 +1,21 @@
 import { getMetadata } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
 
+// media query match that indicates mobile/tablet width
 const isDesktop = window.matchMedia('(min-width: 768px)');
 
-/* =====================================================
-   Event handlers (DEFINED FIRST)
-   ===================================================== */
+/* ================================
+   Utility / Behavior Functions
+================================ */
 
-function openOnKeydown(e) {
-  const focused = document.activeElement;
-  if (!focused || !focused.classList.contains('nav-drop')) return;
+function toggleAllNavSections(sections, expanded = false) {
+  if (!sections) return;
 
-  if (e.code === 'Enter' || e.code === 'Space') {
-    const expanded = focused.getAttribute('aria-expanded') === 'true';
-    const sections = focused.closest('.nav-sections');
-
-    toggleAllNavSections(sections, false);
-    focused.setAttribute('aria-expanded', !expanded);
-  }
-}
-
-function focusNavSection() {
-  document.activeElement?.addEventListener('keydown', openOnKeydown);
+  sections
+    .querySelectorAll('.nav-sections .default-content-wrapper > ul > li')
+    .forEach((section) => {
+      section.setAttribute('aria-expanded', expanded);
+    });
 }
 
 function closeOnEscape(e) {
@@ -36,17 +30,17 @@ function closeOnEscape(e) {
   const expandedSection = navSections.querySelector('[aria-expanded="true"]');
 
   if (expandedSection && isDesktop.matches) {
-    toggleAllNavSections(navSections, false);
+    toggleAllNavSections(navSections);
     expandedSection.focus();
   } else if (!isDesktop.matches) {
-    toggleMenu(nav, navSections, false);
-    nav.querySelector('button')?.focus();
+    toggleMenu(nav, navSections);
+    nav.querySelector('.nav-hamburger button')?.focus();
   }
 }
 
 function closeOnFocusLost(e) {
   const nav = e.currentTarget;
-  if (nav.contains(e.relatedTarget)) return;
+  if (!nav || nav.contains(e.relatedTarget)) return;
 
   const navSections = nav.querySelector('.nav-sections');
   if (!navSections) return;
@@ -60,40 +54,42 @@ function closeOnFocusLost(e) {
   }
 }
 
-/* =====================================================
-   Helper functions
-   ===================================================== */
+function openOnKeydown(e) {
+  const focused = document.activeElement;
+  if (!focused || focused.className !== 'nav-drop') return;
 
-function toggleAllNavSections(sections, expanded = false) {
-  sections
-    .querySelectorAll('.default-content-wrapper > ul > li')
-    .forEach((section) => {
-      section.setAttribute('aria-expanded', expanded);
-    });
+  if (e.code === 'Enter' || e.code === 'Space') {
+    const expanded = focused.getAttribute('aria-expanded') === 'true';
+    toggleAllNavSections(focused.closest('.nav-sections'));
+    focused.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+  }
+}
+
+function focusNavSection() {
+  document.activeElement?.addEventListener('keydown', openOnKeydown);
 }
 
 function toggleMenu(nav, navSections, forceExpanded = null) {
-  const isExpanded = nav.getAttribute('aria-expanded') === 'true';
-  const expanded = forceExpanded !== null ? forceExpanded : !isExpanded;
+  const expanded = forceExpanded !== null
+    ? !forceExpanded
+    : nav.getAttribute('aria-expanded') === 'true';
+
+  const button = nav.querySelector('.nav-hamburger button');
 
   document.body.style.overflowY = expanded || isDesktop.matches ? '' : 'hidden';
 
-  nav.setAttribute('aria-expanded', expanded);
-
+  nav.setAttribute('aria-expanded', expanded ? 'false' : 'true');
   toggleAllNavSections(
     navSections,
-    expanded && !isDesktop.matches,
+    expanded || isDesktop.matches ? 'false' : 'true',
   );
 
-  const button = nav.querySelector('.nav-hamburger button');
-  if (button) {
-    button.setAttribute(
-      'aria-label',
-      expanded ? 'Close navigation' : 'Open navigation',
-    );
-  }
+  button?.setAttribute(
+    'aria-label',
+    expanded ? 'Open navigation' : 'Close navigation',
+  );
 
-  const navDrops = navSections.querySelectorAll('.nav-drop');
+  const navDrops = navSections?.querySelectorAll('.nav-drop') || [];
 
   if (isDesktop.matches) {
     navDrops.forEach((drop) => {
@@ -118,29 +114,32 @@ function toggleMenu(nav, navSections, forceExpanded = null) {
   }
 }
 
-/* =====================================================
-   Main decorate
-   ===================================================== */
+/* ================================
+   Header Decorator
+================================ */
 
 export default async function decorate(block) {
-  /* ---------- head-top ---------- */
-  const headTop = document.createElement('div');
-  headTop.className = 'head-top';
-
-  while (block.firstElementChild) {
-    headTop.append(block.firstElementChild);
-  }
-
-  /* ---------- load nav ---------- */
   const navMeta = getMetadata('nav');
   const navPath = navMeta
     ? new URL(navMeta, window.location).pathname
     : '/nav';
 
   const fragment = await loadFragment(navPath);
+  if (!fragment) return;
 
   block.textContent = '';
 
+  /* -------- Head Top (authorable) -------- */
+  const firstSection = fragment.querySelector(':scope > div');
+
+  if (firstSection) {
+    const headTop = document.createElement('div');
+    headTop.className = 'head-top';
+    headTop.append(firstSection);
+    block.append(headTop);
+  }
+
+  /* -------- Nav -------- */
   const nav = document.createElement('nav');
   nav.id = 'nav';
 
@@ -148,37 +147,41 @@ export default async function decorate(block) {
     nav.append(fragment.firstElementChild);
   }
 
-  ['brand', 'sections', 'tools'].forEach((name, i) => {
-    nav.children[i]?.classList.add(`nav-${name}`);
+  const classes = ['brand', 'sections', 'tools'];
+  classes.forEach((cls, index) => {
+    const section = nav.children[index];
+    if (section) section.classList.add(`nav-${cls}`);
   });
 
-  const navBrand = nav.querySelector('.nav-brand .button');
+  const navBrand = nav.querySelector('.nav-brand');
   if (navBrand) {
-    navBrand.className = '';
-    navBrand.closest('.button-container')
-      ?.classList.remove('button-container');
+    const brandLink = navBrand.querySelector('.button');
+    if (brandLink) {
+      brandLink.className = '';
+      brandLink.closest('.button-container')?.classList.remove('button-container');
+    }
   }
 
   const navSections = nav.querySelector('.nav-sections');
+  if (navSections) {
+    navSections
+      .querySelectorAll(':scope .default-content-wrapper > ul > li')
+      .forEach((navSection) => {
+        if (navSection.querySelector('ul')) {
+          navSection.classList.add('nav-drop');
+        }
 
-  navSections
-    ?.querySelectorAll(':scope .default-content-wrapper > ul > li')
-    .forEach((section) => {
-      if (section.querySelector('ul')) {
-        section.classList.add('nav-drop');
-      }
-
-      section.addEventListener('click', () => {
-        if (!isDesktop.matches) return;
-
-        const expanded = section.getAttribute('aria-expanded') === 'true';
-
-        toggleAllNavSections(navSections, false);
-        section.setAttribute('aria-expanded', !expanded);
+        navSection.addEventListener('click', () => {
+          if (isDesktop.matches) {
+            const expanded = navSection.getAttribute('aria-expanded') === 'true';
+            toggleAllNavSections(navSections);
+            navSection.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+          }
+        });
       });
-    });
+  }
 
-  /* ---------- hamburger ---------- */
+  /* -------- Hamburger -------- */
   const hamburger = document.createElement('div');
   hamburger.className = 'nav-hamburger';
   hamburger.innerHTML = `
@@ -186,10 +189,7 @@ export default async function decorate(block) {
       <span class="nav-hamburger-icon"></span>
     </button>
   `;
-
-  hamburger.addEventListener('click', () => {
-    toggleMenu(nav, navSections);
-  });
+  hamburger.addEventListener('click', () => toggleMenu(nav, navSections));
 
   nav.prepend(hamburger);
   nav.setAttribute('aria-expanded', 'false');
@@ -199,14 +199,9 @@ export default async function decorate(block) {
     toggleMenu(nav, navSections, isDesktop.matches);
   });
 
-  /* ---------- assemble ---------- */
   const navWrapper = document.createElement('div');
   navWrapper.className = 'nav-wrapper';
   navWrapper.append(nav);
-
-  if (headTop.childElementCount) {
-    block.append(headTop);
-  }
 
   block.append(navWrapper);
 }
