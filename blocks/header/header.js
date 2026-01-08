@@ -37,8 +37,8 @@ function closeOnFocusLost(e) {
 function openOnKeydown(e) {
   const focused = document.activeElement;
   if (
-    focused?.className === 'nav-drop' &&
-    (e.code === 'Enter' || e.code === 'Space')
+    focused?.className === 'nav-drop'
+    && (e.code === 'Enter' || e.code === 'Space')
   ) {
     const expanded = focused.getAttribute('aria-expanded') === 'true';
     toggleAllNavSections(focused.closest('.nav-sections'));
@@ -59,10 +59,9 @@ function toggleAllNavSections(sections, expanded = false) {
 }
 
 function toggleMenu(nav, navSections, forceExpanded = null) {
-  const expanded =
-    forceExpanded !== null
-      ? !forceExpanded
-      : nav.getAttribute('aria-expanded') === 'true';
+  const expanded = forceExpanded !== null
+    ? !forceExpanded
+    : nav.getAttribute('aria-expanded') === 'true';
 
   // 🔑 IMPORTANT: sync CSS state for mobile full-screen menu
   const header = nav.closest('header');
@@ -70,19 +69,18 @@ function toggleMenu(nav, navSections, forceExpanded = null) {
 
   const button = nav.querySelector('.nav-hamburger button');
 
-  document.body.style.overflowY =
-    expanded || isDesktop.matches ? '' : 'hidden';
+  document.body.style.overflowY = expanded || isDesktop.matches ? '' : 'hidden';
 
   nav.setAttribute('aria-expanded', expanded ? 'false' : 'true');
 
   toggleAllNavSections(
     navSections,
-    expanded || isDesktop.matches ? 'false' : 'true'
+    expanded || isDesktop.matches ? 'false' : 'true',
   );
 
   button.setAttribute(
     'aria-label',
-    expanded ? 'Open navigation' : 'Close navigation'
+    expanded ? 'Open navigation' : 'Close navigation',
   );
 
   const navDrops = navSections.querySelectorAll('.nav-drop');
@@ -161,12 +159,11 @@ export default async function decorate(block) {
 
         navSection.addEventListener('click', () => {
           if (isDesktop.matches) {
-            const expanded =
-              navSection.getAttribute('aria-expanded') === 'true';
+            const expanded = navSection.getAttribute('aria-expanded') === 'true';
             toggleAllNavSections(navSections);
             navSection.setAttribute(
               'aria-expanded',
-              expanded ? 'false' : 'true'
+              expanded ? 'false' : 'true',
             );
           }
         });
@@ -181,17 +178,13 @@ export default async function decorate(block) {
       <span class="nav-hamburger-icon"></span>
     </button>
   `;
-  hamburger.addEventListener('click', () =>
-    toggleMenu(nav, navSections)
-  );
+  hamburger.addEventListener('click', () => toggleMenu(nav, navSections));
 
   nav.prepend(hamburger);
 
   nav.setAttribute('aria-expanded', 'false');
   toggleMenu(nav, navSections, isDesktop.matches);
-  isDesktop.addEventListener('change', () =>
-    toggleMenu(nav, navSections, isDesktop.matches)
-  );
+  isDesktop.addEventListener('change', () => toggleMenu(nav, navSections, isDesktop.matches));
 
   // build nav-wrapper with fragment on top
   const navWrapper = document.createElement('div');

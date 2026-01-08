@@ -471,15 +471,16 @@ header nav .nav-tools .icon {
   height: 18px;
   transition: .4s ease-out;
   margin-left: 18px;
+  filter: brightness(0) invert(1);
 }
 @media (width >= 768px){
-  header nav .nav-tools .icon .icon-icon-email{
+  header nav .nav-tools .icon img[data-icon-name="icon-email"]{
   display: none;
 }
 }
 
 @media (width < 768px) {
-  header nav .nav-tools .icon .icon-icon-email {
+  header nav .nav-tools .icon img img[data-icon-name="icon-email"]{
   display: block;
 }}
 
